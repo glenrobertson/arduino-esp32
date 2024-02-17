@@ -131,7 +131,7 @@ unsigned long long operator"" _GB(unsigned long long x)
 
 EspClass ESP;
 
-void EspClass::deepSleep(uint32_t time_us)
+void EspClass::deepSleep(uint64_t time_us)
 {
     esp_deep_sleep(time_us);
 }
@@ -248,6 +248,10 @@ String EspClass::getSketchMD5()
         md5.add(pb, readBytes);
         lengthLeft -= readBytes;
         offset += readBytes;
+
+        #if CONFIG_FREERTOS_UNICORE
+        delay(1);  // Fix solo WDT
+        #endif
     }
     free(pb);
     md5.calculate();
